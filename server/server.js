@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const RequestHandler = require('./RequestHandler');
 
+const app = express();
+
 app.use(express.json()); // Middleware to parse JSON request bodies
 
 app.use(express.static(path.join(__dirname, '../client/dist')));

@@ -1,5 +1,4 @@
 const Controller = require('./Controller');
-const Validation = require('./ServerValidation');
 
 class RequestHandler {
     constructor() {
