@@ -6,7 +6,7 @@ const flashcardsModel = new FlashcardsModel();
 
 function App() {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <MainPresenter model={flashcardsModel}/>
     </div>
   )

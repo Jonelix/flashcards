@@ -3,26 +3,29 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-      "heroku-postbuild": "npm install --prefix server && npm install --prefix client && npm run build --prefix client"
+        "heroku-postbuild": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+        "build-and-run": "cd client && npm run build && cd .. && node server/server.js"
     },
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/Jonelix/flashcards.git"
+        "type": "git",
+        "url": "git+https://github.com/Jonelix/flashcards.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "type": "commonjs",
     "bugs": {
-      "url": "https://github.com/Jonelix/flashcards/issues"
+        "url": "https://github.com/Jonelix/flashcards/issues"
     },
     "homepage": "https://github.com/Jonelix/flashcards#readme",
     "description": "",
     "engines": {
-      "node": "22.13.1",
-      "npm": "11.0"
+        "node": "22.13.1",
+        "npm": "11.0"
     },
     "dependencies": {
-      "pg": "^8.13.1"
+        "@tailwindcss/vite": "^4.0.13",
+        "pg": "^8.13.1",
+        "tailwindcss": "^4.0.13"
     }
-  }
+}

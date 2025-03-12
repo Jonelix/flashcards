@@ -31,7 +31,8 @@ if (process.env.DATABASE_URL) {
 // 3. Define your model(s) and sync as before
 const Flashcards = database.define('flashcards', {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    string: { type: DataTypes.STRING, allowNull: true }
+    original: { type: DataTypes.STRING, allowNull: true },
+    translation: { type: DataTypes.STRING, allowNull: true }
 }, {
     tableName: 'flashcards',
     timestamps: false
@@ -44,6 +45,14 @@ const Flashcards = database.define('flashcards', {
 class FlashcardsDAO {
     async getAllFlashcards() {
         return await Flashcards.findAll();
+    }
+
+    async createFlashcard(original, translation) {
+        return await Flashcards.create({ original, translation });
+    }
+
+    async deleteFlashcard(id) {
+        return await Flashcards.destroy({ where: { id } });
     }
 }
 
