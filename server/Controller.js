@@ -5,8 +5,8 @@ class Controller {
         this.flashcardsDAO = new FlashcardsDAO();
     }
 
-    async testFunction() {
-        const response = await this.flashcardsDAO.testFunction();
+    async getAllFlashcards() {
+        const response = await this.flashcardsDAO.getAllFlashcards();
         return response;
     }
 }

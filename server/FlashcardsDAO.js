@@ -23,7 +23,7 @@ const Flashcards = database.define('flashcards', {
 })();
 
 class FlashcardsDAO {
-    async testFunction() {
+    async getAllFlashcards() {
         return await Flashcards.findAll();
     }
 }

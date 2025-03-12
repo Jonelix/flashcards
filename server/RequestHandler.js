@@ -31,6 +31,19 @@ class RequestHandler {
             }
         });
         */
+
+        app.get('/api/getAllFlashcards', async (req, res) => {
+            try {
+                const response = await this.controller.getAllFlashcards();
+                if (!response) {
+                  res.status(404).json({ message: 'Flashcards not found' });
+                } else {
+                  res.status(200).json(response);
+                }
+            } catch (error) {
+                res.status(500).json({ message: 'Server error', error: error.message });
+            }
+        });
     }
 }
 
