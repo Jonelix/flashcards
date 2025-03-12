@@ -10,9 +10,9 @@ const database = new Sequelize(
         logging: false // Disable query logging
     });
 
-const Flashcards = database.define('person', {
-        flascard_id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-        flashcard_string: { type: DataTypes.STRING, allowNull: true }
+const Flashcards = database.define('flashcards', {
+        id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+        string: { type: DataTypes.STRING, allowNull: true }
     }, {
         tableName: 'flashcards', // Ensure Sequelize does not pluralize the table name
         timestamps: false     // Disable automatic createdAt/updatedAt columns if not needed
