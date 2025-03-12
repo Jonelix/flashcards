@@ -1,0 +1,28 @@
+{
+    "name": "flashcards",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+      "heroku-postbuild": "npm install --prefix server && npm install --prefix client && npm run build --prefix client"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Jonelix/flashcards.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+      "url": "https://github.com/Jonelix/flashcards/issues"
+    },
+    "homepage": "https://github.com/Jonelix/flashcards#readme",
+    "description": "",
+    "engines": {
+      "node": "22.13.1",
+      "npm": "11.0"
+    },
+    "dependencies": {
+      "pg": "^8.13.1"
+    }
+  }
