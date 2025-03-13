@@ -11,7 +11,8 @@ const HomeView = observer(({ model }) => {
   // Fetch all flashcards
   const fetchFlashcards = async () => {
     try {
-      const response = await fetch("http://localhost:5005/api/getAllFlashcards", {
+      const response = await fetch("http://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/getAllFlashcards", {
+      //const response = await fetch("http://localhost:5005/api/getAllFlashcards", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -31,7 +32,7 @@ const HomeView = observer(({ model }) => {
   const createFlashcard = async () => {
     try {
         console.log("Creating Flashcard:", originalString, translationString); 
-      const response = await fetch("http://localhost:5005/api/createFlashcard", {
+      //const response = await fetch("http://localhost:5005/api/createFlashcard", {
       const response = await fetch("http://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/createFlashcard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
