@@ -33,7 +33,7 @@ const HomeView = observer(({ model }) => {
     try {
         console.log("Creating Flashcard:", originalString, translationString); 
       //const response = await fetch("http://localhost:5005/api/createFlashcard", {
-      const response = await fetch("http://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/createFlashcard", {
+      const response = await fetch("https://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/createFlashcard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
