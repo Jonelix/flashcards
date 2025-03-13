@@ -11,7 +11,7 @@ const HomeView = observer(({ model }) => {
   // Fetch all flashcards
   const fetchFlashcards = async () => {
     try {
-      const response = await fetch("http://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/getAllFlashcards", {
+      const response = await fetch("https://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/getAllFlashcards", {
       //const response = await fetch("http://localhost:5005/api/getAllFlashcards", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
