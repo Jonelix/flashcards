@@ -15,8 +15,8 @@ const Flashcard = observer(({ id, original, translation, onDelete }) => {
     e.stopPropagation();
     try {
       const response = await fetch(
-        `https://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/deleteFlashcard/${id}`,
-        //`http://localhost:5005/api/deleteFlashcard/${id}`,
+        //`https://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/deleteFlashcard/${id}`,
+        `http://localhost:5005/api/deleteFlashcard/${id}`,
         {
           method: "DELETE",
           headers: {

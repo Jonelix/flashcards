@@ -4,7 +4,7 @@
     "main": "index.js",
     "scripts": {
         "heroku-postbuild": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
-        "build-and-run": "cd client && npm run build && cd .. && node server/server.js"
+        "bar": "cd client && npm run build && cd .. && node server/server.js"
     },
     "repository": {
         "type": "git",
