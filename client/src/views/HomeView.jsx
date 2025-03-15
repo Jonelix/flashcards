@@ -111,12 +111,13 @@ const HomeView = observer(({ model }) => {
   const currentCard = hasFlashcards ? model.flashcards[currentIndex] : null;
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center relative bg-emerald-100 p-4 border-r border-red-300">
+    <div className="flex flex-col w-full items-center justify-center relative bg-emerald-100 p-4">
+
   {hasFlashcards ? (
     <div className="flex items-center">
       {/* Left Arrow */}
       <button
-        className="px-4 py-2 bg-gray-300 rounded mr-4"
+        className="px-4 py-2 bg-blue-200 rounded mr-4"
         onClick={handlePrevCard}
       >
         &larr; Prev
@@ -136,7 +137,7 @@ const HomeView = observer(({ model }) => {
 
       {/* Right Arrow */}
       <button
-        className="px-4 py-2 bg-gray-300 rounded ml-4"
+        className="px-4 py-2 bg-blue-200 rounded ml-4"
         onClick={handleNextCard}
       >
         Next &rarr;

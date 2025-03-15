@@ -11,7 +11,7 @@ const MainPresenter = observer(({ model }) => {
             <HeaderPresenter model={model} />
         
             {/* This div grows to occupy the rest of the screen */}
-            <div className="flex-1 border-black border-2">
+            <div className="flex flex-1 w-full">
                 <Routes>
                     <Route path="/" element={<HomePresenter model={model} />} />
                 {/* other routes here */}
