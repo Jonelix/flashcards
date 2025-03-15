@@ -79,6 +79,17 @@ class Controller {
         const response = await this.flashcardsDAO.deleteFlashcardTag(flashcard_id, tag_id);
         return response;
     }
+
+    //Hide functions
+    async getHiddenStatusFlashcard(id) {
+        const response = await this.flashcardsDAO.getHiddenStatusFlashcard(id);
+        return response;
+    }
+
+    async toggleHideFlashcard(id) {
+        const response = await this.flashcardsDAO.toggleHideFlashcard(id);
+        return response;
+    }
 }
 
 module.exports = Controller;

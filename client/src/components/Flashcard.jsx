@@ -1,69 +1,243 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
+import ArrowUpSVG from "../assets/arrow_up.svg";
+import ArrowDownSVG from "../assets/arrow_down.svg";
+import EyeSVG from "../assets/eye.svg";
+import EyeDashSVG from "../assets/eye_dash.svg";
+import TrashSVG from "../assets/trash.svg";
+import PlusSVG from "../assets/plus.svg";
+import { set } from "mobx";
 
-const Flashcard = observer(({ id, original, translation, onDelete }) => {
-  const [showTranslation, setShowTranslation] = React.useState(false);
+const Flashcard = observer(({ id, original, translation, hidden, allTags, onGetAllTags, onRefresh, apiURL }) => {
+  const [flashcardTags, setFlashcardTags] = useState([]);
+  const [showTranslation, setShowTranslation] = useState(false);
+  const [expanded, setExpanded] = useState(false); // For expanding/collapsing tags
+  const [showTagSelector, setShowTagSelector] = useState(false); // Show/hide dropdown of all tags
+  const [currentVisibility, setCurrentVisibility] = useState(hidden);
 
-  // Flip the card to show/hide translation
-  const handleFlip = () => {
-    setShowTranslation((prev) => !prev);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    setCurrentVisibility(hidden);
+  }, [hidden]);
+
+  useEffect(() => {
+    fetchFlashcardTags();
+  }, [id]);
+
+  // --------------------------------
+  // API calls
+  // --------------------------------
+  const fetchFlashcardTags = async () => {
+    try {
+      const response = await fetch(`${apiURL}/api/getFlashcardTags/${id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to get flashcard tags.");
+      }
+
+      // Extract the tag_id values into an array
+      const tagIds = data.map(tag => tag.tag_id);
+
+      setFlashcardTags(tagIds);  // Store extracted tag IDs
+      return tagIds;
+    } catch (error) {
+      console.error("Get flashcard tags Error:", error.message);
+    }
   };
 
-  // Delete the flashcard via API, then pass
-  // updated flashcards array back to parent
+  const createFlashcardTag = async (tag_id) => {
+    try {
+      const response = await fetch(`${apiURL}/api/createFlashcardTag/${id}/${tag_id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to add tag to flashcard.");
+      }
+      fetchFlashcardTags();
+    } catch (error) {
+      console.error("Add Tag to Flashcard Error:", error.message);
+    }
+  };
+
+  const deleteFlashcardTag = async (tag_id) => {
+    try {
+      const response = await fetch(`${apiURL}/api/deleteFlashcardTag/${id}/${tag_id}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete tag from flashcard.");
+      }
+      fetchFlashcardTags();
+    } catch (error) {
+      console.error("Delete Tag from Flashcard Error:", error.message);
+    }
+  };
+
   const handleDelete = async (e) => {
     e.stopPropagation();
     try {
-      const response = await fetch(
-        //`https://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/deleteFlashcard/${id}`,
-        `http://localhost:5005/api/deleteFlashcard/${id}`,
+      const response = await fetch(`${apiURL}/api/deleteFlashcard/${id}`,
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed to delete flashcard.");
       }
-      // Notify parent so it can update the model's flashcards
-      onDelete(data);
+      onRefresh();
     } catch (error) {
       console.error("Delete Error:", error.message);
     }
   };
 
-  const handlePrint = async (e) => {
+  const fetchToggleVisibility = async (e) => {
     e.stopPropagation();
-    console.log("Print prop:", original, translation, id);
-  }
+    try {
+      const response = await fetch(`${apiURL}/api/toggleHideFlashcard/${id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to toggle flashcard visibility.");
+      }
+      onRefresh();
+    } catch (error) {
+      console.error("Toggle Visibility Error:", error.message);
+    }
+  };
+
+  // --------------------------------
+  // UI Handlers
+  // --------------------------------
+  const handleFlip = (e) => {
+    const clickedId = e.target.id || e.target.closest("button")?.id;
+    if (clickedId === "eyeBtn" || clickedId === "trashBtn" || clickedId === "arrowBtn") {
+      if (clickedId === "eyeBtn"){
+        console.log("Eye button clicked");
+      }
+      if (clickedId === "trashBtn"){
+        console.log("Trash button clicked");
+      }
+      if (clickedId === "arrowBtn"){
+        console.log("Arrow button clicked");
+      }
+      return;
+    }
+    console.log("Card clicked");
+    setShowTranslation((prev) => !prev);
+  };
+
+  const toggleExpand = (e) => {
+    e.stopPropagation();
+    setExpanded(!expanded);
+  };
+
+  const handlePlusClick = async (e) => {
+    e.stopPropagation();
+    if (!showTagSelector) {
+      if (allTags.length === 0) {
+        await onGetAllTags();
+      }
+    }
+    setShowTagSelector((prev) => !prev);
+  };
+
+  const handleSelectTag = (tagId) => {
+    createFlashcardTag(tagId);
+    setShowTagSelector(false);
+  };
 
   return (
     <div
-      className="relative w-80 h-48 bg-white rounded-lg shadow-md flex items-center justify-center cursor-pointer"
+      ref={containerRef}
+      className="relative w-80 bg-white rounded-lg shadow-md p-3 cursor-pointer select-none"
       onClick={handleFlip}
     >
-      {/* Delete button */}
-      <button
-        className="absolute top-2 left-2 bg-red-400 text-white text-xs px-2 py-1 rounded"
-        onClick={handleDelete}
-      >
-        Delete
-      </button>
+      {/* Top bar */}
+      <div className="flex justify-between items-center mb-2">
+        <button
+          id="eyeBtn"
+          onClick={fetchToggleVisibility}
+          className="w-8 h-8 p-1 border-2 border-gray-200 rounded-lg"
+        >
+          {currentVisibility ? <img src={EyeDashSVG} alt="Eye Dash" /> : <img src={EyeSVG} alt="Eye" />}
+        </button>
 
-      {/* Print button */}
-      <button
-        className="absolute top-2 left-20 bg-blue-400 text-white text-xs px-2 py-1 rounded"
-        onClick={handlePrint}
-      >
-        Print prop
-      </button>
+        <div className="text-lg font-semibold text-gray-700">
+          {showTranslation ? "English" : "Norwegian"}
+        </div>
 
-      {/* Front/Back content */}
-      <div className="w-full h-full flex items-center justify-center text-xl font-semibold text-gray-800 p-4">
+        <button
+          id="trashBtn"
+          onClick={handleDelete}
+          className="w-8 h-8 p-1 border-2 border-gray-200 rounded-lg"
+        >
+          <img src={TrashSVG} alt="Trash" />
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="text-xl font-semibold text-center py-4 min-h-[64px]">
         {showTranslation ? translation : original}
+      </div>
+
+      {/* Tags Section */}
+      <div className="flex flex-col">
+        <div className="flex justify-center">
+          <button id="arrowBtn" onClick={toggleExpand} className="w-8 h-8 p-1 border-2 border-gray-200 rounded-lg">
+            {expanded ? <img src={ArrowDownSVG} alt="Arrow Down" /> : <img src={ArrowUpSVG} alt="Arrow Up" />}
+          </button>
+        </div>
+
+        {expanded && (
+          <div className="mt-3 space-y-2">
+            <div className="flex flex-wrap gap-2">
+              {allTags
+                .filter(tag => flashcardTags.includes(tag.id)) // Filter tags by matching IDs
+                .map((tag) => (
+                  <div
+                    key={tag.id}
+                    className="relative group px-2 py-1 bg-gray-200 rounded-full text-sm flex items-center"
+                  >
+                    <span>{tag.name}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteFlashcardTag(tag.id);
+                      }}
+                      className="absolute right-0 top-0 w-4 h-4 hidden group-hover:block"
+                    >
+                      <img src={TrashSVG} alt="Delete Tag" />
+                    </button>
+                  </div>
+              ))}
+
+              <button
+                className="px-2 py-1 bg-blue-200 rounded-full text-sm text-blue-700"
+                onClick={handlePlusClick}
+              >
+                <img src={PlusSVG} alt="Plus Tag" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

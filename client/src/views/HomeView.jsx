@@ -1,18 +1,22 @@
-import React from "react";
+import React, { use } from "react";
 import { observer } from "mobx-react-lite";
 import Flashcard from "../components/Flashcard.jsx";
+import PlusSVG from "../assets/plus.svg";
 
 const HomeView = observer(({ model }) => {
+  const debug = false;
+  const apiURL = debug ? "http://localhost:5005" : "https://langauge-flashcards-31c55d8f1c2f.herokuapp.com";
   const [originalString, setOriginalString] = React.useState("");
   const [translationString, setTranslationString] = React.useState("");
   const [showAddCardModal, setShowAddCardModal] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
+  React.useEffect(() => {fetchTags()}, []);
+
   // Fetch all flashcards
   const fetchFlashcards = async () => {
     try {
-      //const response = await fetch("https://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/getAllFlashcards", {
-      const response = await fetch("http://localhost:5005/api/getAllFlashcards", {
+      const response = await fetch(`${apiURL}/api/getAllFlashcards`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -28,12 +32,29 @@ const HomeView = observer(({ model }) => {
     }
   };
 
+  //Fetch all tags
+  const fetchTags = async () => {
+    try {
+      const response = await fetch(`${apiURL}/api/getAllTags`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch tags.");
+      }
+      model.setTags(data);
+      return data;
+    } catch (error) {
+      console.error("Fetch All Tags Error:", error.message);
+    }
+  };
+
   // Create a new flashcard
   const createFlashcard = async () => {
     try {
         console.log("Creating Flashcard:", originalString, translationString); 
-        //const response = await fetch("https://langauge-flashcards-31c55d8f1c2f.herokuapp.com/api/createFlashcard", {
-        const response = await fetch("http://localhost:5005/api/createFlashcard", {
+        const response = await fetch(`${apiURL}/api/createFlashcard`, {
       
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,7 +83,7 @@ const HomeView = observer(({ model }) => {
   // Called after a child <Flashcard> successfully deletes a card
   // We receive the updated flashcards array from the server,
   // then we update our model and adjust currentIndex if needed.
-  const handleDeleteUpdate = () => {
+  const handleRefresh = () => {
     fetchFlashcards();
   };
 
@@ -106,7 +127,11 @@ const HomeView = observer(({ model }) => {
         id={currentCard.id}
         original={currentCard.original}
         translation={currentCard.translation}
-        onDelete={handleDeleteUpdate}
+        hidden={currentCard.hidden}
+        allTags={model.tags}
+        onGetAllTags={fetchTags}
+        onRefresh={handleRefresh}
+        apiURL={apiURL}
       />
 
       {/* Right Arrow */}
@@ -123,10 +148,10 @@ const HomeView = observer(({ model }) => {
 
   {/* Plus Button for adding a new card */}
   <button
-    className="absolute bottom-4 right-4 bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl"
+    className="absolute bottom-4 right-4 bg-blue-200 text-blue-700 rounded-full w-12 h-12 flex items-center justify-center text-2xl"
     onClick={() => setShowAddCardModal(true)}
   >
-    +
+    <img src={PlusSVG} alt="Plus Tag" />
   </button>
 
       {/* Modal for adding a new flashcard */}
@@ -135,7 +160,7 @@ const HomeView = observer(({ model }) => {
           <div className="bg-white p-6 rounded shadow-lg w-96 relative">
             <h2 className="text-xl mb-4">Add a new Flashcard</h2>
             <label className="block mb-2">
-              <span className="text-gray-700">Original</span>
+              <span className="text-gray-700">{"Original (Norwegian)"}</span>
               <input
                 type="text"
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -144,7 +169,7 @@ const HomeView = observer(({ model }) => {
               />
             </label>
             <label className="block mb-4">
-              <span className="text-gray-700">Translation</span>
+              <span className="text-gray-700">{"Translation (English)"}</span>
               <input
                 type="text"
                 className="mt-1 block w-full border border-gray-300 rounded p-2"

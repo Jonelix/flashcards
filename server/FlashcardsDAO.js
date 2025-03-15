@@ -32,7 +32,8 @@ if (process.env.DATABASE_URL) {
 const Flashcards = database.define('flashcards', {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     original: { type: DataTypes.STRING, allowNull: true },
-    translation: { type: DataTypes.STRING, allowNull: true }
+    translation: { type: DataTypes.STRING, allowNull: true },
+    hidden: { type: DataTypes.BOOLEAN, allowNull: true }
 }, {
     tableName: 'flashcards',
     timestamps: false
@@ -147,6 +148,19 @@ class FlashcardsDAO {
 
     async deleteFlashcardTag(flashcard_id, tag_id) {
       return await FlashcardTags.destroy({ where: { flashcard_id, tag_id } });
+    }
+
+    //Hide functions
+    async getHiddenStatusFlashcard(id) {
+        const flashcard = await Flashcards.findByPk(id);
+        return flashcard.hidden;
+    }
+
+    async toggleHideFlashcard(id) {
+        const flashcard = await Flashcards.findByPk(id);
+        flashcard.hidden = !flashcard.hidden;
+        await flashcard.save();
+        return flashcard;
     }
 
 }
