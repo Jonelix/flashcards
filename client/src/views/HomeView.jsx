@@ -4,7 +4,7 @@ import Flashcard from "../components/Flashcard.jsx";
 import PlusSVG from "../assets/plus.svg";
 
 const HomeView = observer(({ model }) => {
-  const debug = false;
+  const debug = model.debug;
   const apiURL = debug ? "http://localhost:5005" : "https://langauge-flashcards-31c55d8f1c2f.herokuapp.com";
   const [originalString, setOriginalString] = React.useState("");
   const [translationString, setTranslationString] = React.useState("");

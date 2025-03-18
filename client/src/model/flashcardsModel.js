@@ -3,6 +3,7 @@ import { makeAutoObservable } from "mobx";
 class FlashcardsModel {
   flashcards = [];
   tags = [];
+  debug = false;
 
   constructor() {
     makeAutoObservable(this);

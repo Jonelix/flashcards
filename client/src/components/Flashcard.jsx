@@ -15,6 +15,10 @@ const Flashcard = observer(({ id, original, translation, hidden, allTags, onGetA
   const [showTagSelector, setShowTagSelector] = useState(false); // Show/hide dropdown of all tags
   const [currentVisibility, setCurrentVisibility] = useState(hidden);
 
+  const [editOriginal, setEditOriginal] = useState(original);
+  const [editTranslation, setEditTranslation] = useState(translation);
+  const [showEditCardModal, setShowEditCardModal] = useState(false);
+
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -123,6 +127,30 @@ const Flashcard = observer(({ id, original, translation, hidden, allTags, onGetA
     }
   };
 
+  const updateFlashcard = async () => {
+    try {
+      const response = await fetch(`${apiURL}/api/updateFlashcard/${id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            original: editOriginal,
+            translation: editTranslation,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update flashcard.");
+      }
+      setShowEditCardModal(false);
+      onRefresh();
+    } catch (error) {
+      console.error("Update Error:", error.message);
+    }
+  };
+
+
   // --------------------------------
   // UI Handlers
   // --------------------------------
@@ -169,6 +197,7 @@ const Flashcard = observer(({ id, original, translation, hidden, allTags, onGetA
       ref={containerRef}
       className="relative w-80 bg-white rounded-lg shadow-md p-3 cursor-pointer select-none"
       onClick={handleFlip}
+      onDoubleClick={() => setShowEditCardModal(true)}
     >
       {/* Top bar */}
       <div className="flex justify-between items-center mb-2">
@@ -197,6 +226,47 @@ const Flashcard = observer(({ id, original, translation, hidden, allTags, onGetA
       <div className="text-xl font-semibold text-center py-4 min-h-[64px]">
         {showTranslation ? translation : original}
       </div>
+
+      {/* Modal for editing existing */}
+      {showEditCardModal && (
+        <div className="fixed inset-0 bg-blue-200 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+            <h2 className="text-xl mb-4">Edit Flashcard</h2>
+            <label className="block mb-2">
+              <span className="text-gray-700">{"Original (Norwegian)"}</span>
+              <input
+                type="text"
+                className="mt-1 block w-full border border-gray-300 rounded p-2"
+                value={editOriginal}
+                onChange={(e) => setEditOriginal(e.target.value)}
+              />
+            </label>
+            <label className="block mb-4">
+              <span className="text-gray-700">{"Translation (English)"}</span>
+              <input
+                type="text"
+                className="mt-1 block w-full border border-gray-300 rounded p-2"
+                value={editTranslation}
+                onChange={(e) => setEditTranslation(e.target.value)}
+              />
+            </label>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowEditCardModal(false)}
+                className="bg-gray-300 px-4 py-2 rounded mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={updateFlashcard}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tags Section */}
       <div className="flex flex-col">

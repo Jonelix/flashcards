@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { Routes, Route } from "react-router-dom";
 import HomePresenter from "./HomePresenter";
 import HeaderPresenter from "./HeaderPresenter";
+import VocabPresenter from "./VocabPresenter";
 
 const MainPresenter = observer(({ model }) => {
 
@@ -14,6 +15,7 @@ const MainPresenter = observer(({ model }) => {
             <div className="flex flex-1 w-full">
                 <Routes>
                     <Route path="/" element={<HomePresenter model={model} />} />
+                    <Route path="/vocab" element={<VocabPresenter model={model} />} />
                 {/* other routes here */}
                  </Routes>
             </div>
