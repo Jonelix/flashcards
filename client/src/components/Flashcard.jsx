@@ -261,7 +261,7 @@ const Flashcard = observer(({ id, original, translation, hidden, allTags, onGetA
                 onClick={updateFlashcard}
                 className="bg-blue-500 text-white px-4 py-2 rounded"
               >
-                Add
+                Update
               </button>
             </div>
           </div>
